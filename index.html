@@ -3289,7 +3289,11 @@
 <div id="view-portal" class="view">
   <header class="portal-header">
     <h1>⬡ PALLAS-LINK</h1>
-    <span class="user-badge">佐藤 教諭</span>
+    <!-- 表のホームページにいつでも戻れるボタンを右上に設置します -->
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <button onclick="logoutToSchool()" style="background: #1a1a1a; border: 1px solid #333; color: #888; font-size: 0.68rem; padding: 0.3rem 0.6rem; min-height: unset; height: auto; border-radius: 4px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#555';this.style.color='#ccc';" onmouseout="this.style.borderColor='#333';this.style.color='#888';">↩ 公開HPへ戻る</button>
+      <span class="user-badge">佐藤 教諭</span>
+    </div>
   </header>
   <div class="portal-content"> <!-- ★portal-content 開始 -->
 
@@ -5497,6 +5501,18 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
     // 介入ログターミナルの「最上部」へ動的に挿入
     terminal.insertBefore(critLog, terminal.firstChild);
   }
+
+  // ポータルから表の公開ホームページへ一時的に戻る処理
+  window.logoutToSchool = function() {
+    // セキュリティ（なりすまし防止）のため、ログイン画面のパスワード欄だけをクリアします
+    var pwInput = document.getElementById('login-pw');
+    if (pwInput) pwInput.value = '';
+    
+    // 表の公開HPビューに画面を切り替えます
+    switchView('school');
+    
+    showToast("ログアウトしました。");
+  };
 
   // 表画面・ポータル裏画面の表示切替
   function switchView(view) {
