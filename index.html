@@ -3135,30 +3135,60 @@
 
           <section class="hp-section">
             <h2>合格実績（2025年度卒業生）</h2>
-            <div class="stats-responsive-grid" style="margin-top: 1.5rem;">
-              <div>
-                <ul style="list-style: none; padding: 0;">
-                  <li style="font-size: 1rem; font-weight: bold; color: var(--primary); border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-bottom: 0.75rem;">主な進学先実績</li>
-                  <!-- 定員合計240名（60名 + 160名 + 20名 = 240名）に人数を調整 -->
-                  <li><strong>国公立大学（合計 60名）</strong><br>蒼葉大学工学部、蒼葉市立人文学科、県立医科情報大学 ほか</li>
-                  <li style="margin-top:0.5rem;"><strong>私立大学（合計 160名）</strong><br>蒼葉理工科学大学、日本教育AI専門、総合人間科学大学 ほか</li>
-                  <li style="margin-top:0.5rem;"><strong>その他専門・就職（合計 20名）</strong><br>パラス共創ライフケアセンター専門、市立医療ケア技術学校 ほか</li>
+            
+            <!-- flex-wrap: wrap により、画面幅が狭いスマホ(mini含む)では100%確実に縦並びになり、PCでは横並びになります -->
+            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: center; justify-content: center; margin-top: 1.5rem;">
+              
+              <!-- 1. 実績テキストエリア（スマホでは横幅いっぱい、PCでは左側に配置） -->
+              <div style="flex: 1 1 280px; min-width: 250px;">
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                  <li style="font-size: 1.05rem; font-weight: bold; color: var(--primary); border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem; margin-bottom: 1.25rem;">
+                    主な進学先実績
+                  </li>
+                  
+                  <li style="margin-bottom: 1rem; line-height: 1.6;">
+                    <strong style="color: var(--primary); font-size: 0.92rem; display: block; margin-bottom: 0.2rem;">
+                      🎓 国公立大学（合計 60名）
+                    </strong>
+                    <span style="font-size: 0.85rem; color: #4A5568;">
+                      蒼葉大学工学部、蒼葉市立人文学科、県立医科情報大学 ほか
+                    </span>
+                  </li>
+                  
+                  <li style="margin-bottom: 1rem; line-height: 1.6;">
+                    <strong style="color: var(--primary); font-size: 0.92rem; display: block; margin-bottom: 0.2rem;">
+                      🏫 私立大学（合計 160名）
+                    </strong>
+                    <span style="font-size: 0.85rem; color: #4A5568;">
+                      蒼葉理工科学大学、日本教育AI専門、総合人間科学大学 ほか
+                    </span>
+                  </li>
+                  
+                  <li style="line-height: 1.6;">
+                    <strong style="color: var(--primary); font-size: 0.92rem; display: block; margin-bottom: 0.2rem;">
+                      💼 その他専門・就職（合計 20名）
+                    </strong>
+                    <span style="font-size: 0.85rem; color: #4A5568;">
+                      パラス共創ライフケアセンター専門、市立医療ケア技術学校 ほか
+                    </span>
+                  </li>
                 </ul>
               </div>
-              <div class="stats-graphic">
-                <div class="stats-circle-wrap">
-                  <!-- widthとheightを100%にすることで、外枠(200px)に完全追従させ、中央の絶対配置テキストとのズレを解消 -->
+              
+              <!-- 2. 円グラフエリア（スマホでは縦並びになって下部中央に配置、PCでは右側に配置） -->
+              <div style="flex: 0 0 200px; display: flex; justify-content: center;">
+                <div class="stats-circle-wrap" style="width: 200px; height: 200px; position: relative;">
                   <svg width="100%" height="100%" viewBox="0 0 200 200" style="transform: rotate(-90deg); display: block;">
                     <circle cx="100" cy="100" r="80" fill="none" stroke="#E2E8F0" stroke-width="16" />
-                    <!-- 特注の破線(stroke-dasharray)設定を取り除き、欠けのない100%の円（現役合格100%）を綺麗に描画 -->
                     <circle cx="100" cy="100" r="80" fill="none" stroke="#319795" stroke-width="16" stroke-linecap="round" />
                   </svg>
                   <div class="stats-circle-text">
-                    <span class="stats-circle-num" style="color: #319795; font-size: 2.4rem; line-height: 1;">100%</span>
-                    <span class="stats-circle-lbl">現役合格率</span>
+                    <span class="stats-circle-num" style="color: #319795; font-size: 2.4rem; line-height: 1; font-weight: bold;">100%</span>
+                    <span class="stats-circle-lbl" style="font-size: 0.72rem; color: #718096; margin-top: 0.25rem;">現役合格率</span>
                   </div>
                 </div>
               </div>
+              
             </div>
           </section>
         </div>
