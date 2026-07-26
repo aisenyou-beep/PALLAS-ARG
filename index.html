@@ -1879,7 +1879,7 @@
     }
     @media (min-width: 768px) {
       .subpage-container {
-        grid-template-columns: 1fr 280px; /* メイン + 右サイドバー of 2カラム構成 */
+        grid-template-columns: 1fr 280px;
       }
     }
     .subpage-sidebar {
@@ -2173,7 +2173,6 @@
       margin: 1.5rem auto;
       line-height: 1.6;
     }
-
     /* 合格実績のレイアウト崩れを強制解決するレスポンシブグリッド */
     .stats-responsive-grid {
       display: grid !important;
@@ -2188,7 +2187,213 @@
         gap: 3rem !important;
       }
     }
-    
+    /* ===== シネマティック・エンディング演出用CSS ===== */
+    .ending-cinematic-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      color: #fff;
+    }
+    /* CG画像を表示するシネマティックフレーム */
+    .ending-cg-frame {
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      aspect-ratio: 16 / 10;
+      background: #000;
+      border-radius: 8px;
+      border: 1px solid #222;
+      margin-bottom: 2rem;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+      opacity: 0;
+      transform: translateY(15px) scale(0.98);
+      transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .ending-cg-frame.show {
+      opacity: 1;
+      transform: none;
+    }
+    .ending-cg-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* ナレーションテキスト表示エリア */
+    .ending-text-box {
+      width: 100%;
+      font-size: 0.88rem;
+      line-height: 1.9;
+      text-align: left;
+      min-height: 180px;
+      margin-bottom: 2rem;
+    }
+    /* 各行がじわっと浮き上がるアニメーション */
+    .ending-para {
+      opacity: 0;
+      transform: translateY(10px);
+      margin-bottom: 1.2rem;
+      transition: all 1.2s ease;
+    }
+    .ending-para.show {
+      opacity: 1;
+      transform: none;
+    }
+    /* エンディングのタイトルカード（映画の終幕風） */
+    .ending-title-card {
+      font-size: 1.15rem;
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 2s ease;
+    }
+    .ending-title-card.show {
+      opacity: 1;
+      transform: none;
+    }
+    /* タイトルに戻るボタン */
+    .ending-restart-btn {
+      padding: 0.65rem 2.2rem;
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      font-size: 0.78rem;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 1s ease;
+      pointer-events: none; /* フェードインするまでクリック不可 */
+    }
+    .ending-restart-btn.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .ending-restart-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+    /* 画面が一瞬真っ白になり、じわっと暗転するフラッシュ効果 */
+    @keyframes camera-flash {
+      0% { background: #fff; opacity: 1; }
+      15% { background: #fff; opacity: 1; }
+      100% { background: #000; opacity: 0; }
+    }
+    .flash-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      pointer-events: none;
+      animation: camera-flash 1.2s ease-out forwards;
+    }
+    /* 白い一文字の光の線が伸び、画面全体に広がるアニメーション */
+    @keyframes reverse-putsun {
+      0% { width: 0%; height: 2px; background: #fff; opacity: 0; }
+      15% { width: 100%; height: 2px; background: #fff; opacity: 1; box-shadow: 0 0 15px #fff; }
+      35% { width: 100%; height: 2px; background: #fff; opacity: 1; }
+      100% { width: 100%; height: 100%; background: #fff; opacity: 1; }
+    }
+    .putsun-overlay {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 999999;
+      pointer-events: none;
+      animation: reverse-putsun 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    /* ===== ニュース報道演出用アニメーション ===== */
+    /* 速報インジケーターの赤丸点滅 */
+    @keyframes blink-live {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    /* テロップのタイピング効果 */
+    @keyframes typing-telop {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    /* テロップカーソルの点滅 */
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: #fff; }
+    }
+    /* ===== シネマティック・エンディング演出用CSS（完全画像全体表示版） ===== */
+    .ending-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      background: #000;
+      overflow-y: auto;          /* 縦方向のスクロールを確実に許可 */
+      padding: 2rem 1.5rem;
+      box-sizing: border-box;
+    }
+    .ending-overlay.active {
+      display: block;
+    }
+    .ending-cinematic-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 1000px;         /* 全体コンテナを 680px ➔ 1000px へ大幅拡大 */
+      margin: 0 auto;
+      padding: 1.5rem 0;
+      color: #fff;
+      box-sizing: border-box;
+    }
+    /* CG画像を表示するシネマティックフレーム */
+    .ending-cg-frame {
+      width: 100%;
+      max-width: 760px;          /* 画像サイズを 600px ➔ 760px へ拡大し、大迫力化 */
+      height: auto;              /* 固定アスペクト比を解除し、画像の高さに合わせる */
+      background: #000;
+      border-radius: 8px;
+      border: 1px solid #222;
+      margin-bottom: 2rem;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+      opacity: 0;
+      transform: translateY(15px) scale(0.98);
+      transition: all 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .ending-cg-frame.show {
+      opacity: 1;
+      transform: none;
+    }
+    .ending-cg-frame img {
+      display: block;
+      width: 100%;
+      height: auto;              /* 高さを自動にし、切り取りを完全に防ぐ */
+      object-fit: contain;       /* 画像本来の縦横比を完全に維持して100%全体を表示 */
+    }
+
+    /* NORMALエンド用：TVと新聞が横に2枚並ぶ大迫力レスポンシブグリッド */
+    .normal-media-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1000px;         /* 2枚並び用に限界値を拡張 */
+      margin-bottom: 2rem;
+    }
+    @media (min-width: 768px) {
+      .normal-media-grid {
+        grid-template-columns: 1fr 1fr; /* PC大画面では1:1で美しく横並び表示 */
+      }
+    }
+    .normal-media-grid .ending-cg-frame {
+      margin-bottom: 0 !important;
+      max-width: 100% !important; /* グリッド内ではコンテナ幅いっぱいに拡大 */
+    }
   </style>
 </head>
 <body class="school-active">
@@ -2608,7 +2813,7 @@
               </div>
               <div class="grid-card">
                 <h4>女子制服</h4>
-                <p style="font-size: 0.8rem; color: #4A5568;">同色のネイビーブレザーに、上品なチェックスカート（紺×グレー）。夏期は半袖白シャツ、冬期は指定 of グレーセーターを着用。リボンは紺×ゴールドの指定品を着用。オプションとして指定のスラックスも選択可能です。</p>
+                <p style="font-size: 0.8rem; color: #4A5568;">同色のネイビーブレザーに、上品なチェックスカート（紺×グレー）。夏期は半袖白シャツ、冬期は指定のグレーセーターを着用。リボンは紺×ゴールドの指定品を着用。オプションとして指定のスラックスも選択可能です。</p>
               </div>
             </div>
             
@@ -2910,7 +3115,7 @@
           <div class="course-detail-summary">
             <h3>難関大学合格を目指す、最上位の学び</h3>
             <p>国公立大・難関私立大を目指す生徒のために、演習・面接・志望校対策を一体的に支える最上位コースです。最新のAI「パラス」と完全連動し、日々の学習計画・進路相談・生活管理をミリ秒単位で最適化。受験に必要な圧倒的知識と、感情に左右されない完璧な学習習慣を高いレベルで構築します。特進コースでは、個々の弱点をAIが瞬時に分析して補正し、限られた時間の中でも確実に実力を引き上げるように徹底設計されています。</p>
-            <p style="margin-top:0.6rem;">単なるペーパーテスト対策にとどまらず、志望校合格に向けて必要な論理的思考力、迅速な判断力、 tender な自己管理力を一気に高めることを最重視します。高い目標を持つ生徒ほど、日々の細かな行動すべてに意味と効率を持たせ、本番で100%の実力を発揮するための実戦力を確実なものにしていきます。</p>
+            <p style="margin-top:0.6rem;">単なるペーパーテスト対策にとどまらず、志望校合格に向けて必要な論理的思考力、迅速な判断力、そして徹底した自己管理力を同時に高めることを最重視します。高い目標を持つ生徒たちが、日々の細かな行動すべてに意味と効率性を見出し、本番で100%の実力を発揮するための実践力を確実に身に付けていきます。</p>
             <div class="course-detail-cards">
               <div class="course-detail-card">
                 <strong>主な特徴</strong>
@@ -3091,6 +3296,9 @@
             <p style="font-size:0.8rem; color:#4A5568;">過去の学習ログをもとに、適性に合った大学や進路の選択肢を提案します。自分に合った受験校を効率的に見つけることができます。</p>
           </div>
         </div>
+        <p style="font-size: 0.72rem; color: #FAF9F6; text-align: right; margin-top: 3rem; user-select: text; font-family: monospace;">
+          パラス緊急停止キー: PALLAS_REBOOT_SYSTEM
+        </p>
       </section>
     </div>
 
@@ -3133,6 +3341,7 @@
             <p>AIが弾き出した判定とマッチング率は絶対であり、無駄のない準備が実を結び、毎年の現役合格率は驚異的な数値を維持しています。</p>
           </section>
 
+          <!-- 合格実績セクション（どんなスマホでも絶対に潰れないレスポンシブ・自動折り返し仕様） -->
           <section class="hp-section">
             <h2>合格実績（2025年度卒業生）</h2>
             
@@ -3356,12 +3565,11 @@
         <div style="background: #2a0505; border: 1px dashed #ff3333; padding: 0.85rem; margin-bottom: 1.25rem; font-size: 0.72rem; color: #ffcccc; line-height: 1.6; font-family: monospace;">
           <strong>[ 暗号解除プロトコル・ガイド ]</strong><br>
           • <strong>Key Alpha (構造・設備):</strong><br>
-          　公式HP「沿革」に記載の【現校舎（鉄筋コンクリート）竣工年】から【創立年】を引いた数値に、公式HP「施設・設備」のサイドバーに記載の【監視カメラ合計台数】を掛け合わせた4桁の数値。<br>
+          　【現校舎（鉄筋コンクリート）竣工年】- 【創立年】×【監視カメラ合計台数】。<br>
           • <strong>Key Beta (時間調整):</strong><br>
-          　本画面（ステータスタブ）最上部の「システム警告ログ」が示す、各科目の【単位数（公式HPカリキュラム参照）】を左から順番に並べた5桁の数値。<br>
+          　【単位数】<br>
           • <strong>Key Gamma (生体・ログ):</strong><br>
-          　本画面の「システム自動介入ログ」をさかのぼり、以下の3つの数値をすべて足し算した3桁の数値。<br>
-          　➔ 【加藤の生徒ID】 ＋ 【佐々木の放課後寄り道距離（メートル）】 ＋ 【体育祭における生体タグの心拍出力制限値】
+          　【加藤の生徒ID】 + 【佐々木の放課後寄り道距離（メートル）】 + 【体育祭における生体タグの心拍出力制限値】
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.75rem; margin-bottom: 1rem;">
@@ -3459,7 +3667,7 @@
         <div class="status-log-entry">
           <span class="status-log-time">2026/04/09 18:15</span>
           <span class="status-log-tag" style="color: #00ff00;">INFO</span>
-          <span>[登校監視] 校外監視ゲート：生徒ID156（佐々木）の放課後帰ターンルート偏位（210m寄り道）を検知。最適ルート復帰の自動警告を送信。</span>
+          <span>[登校監視] 校外監視ゲート：生徒ID156（佐々木）の放課後帰宅ルート偏位（210m寄り道）を検知。最適ルート復帰の自動警告を送信。</span>
         </div>
         <div class="status-log-entry">
           <span class="status-log-time">2026/04/08 14:22</span>
@@ -4119,7 +4327,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
         <div class="mail-detail" id="mail-inbox-extra23">
           <p><strong>件名：</strong>[PALLAS] 信号遮断シールドイベント発生警告（1件）</p>
           <p style="margin-top:0.75rem;font-size:0.85rem;line-height:1.8;">
-            警告：本日深夜01:15、2年3組在籍 of 1名において、家庭内パラスアプリの通信外（携帯端末の電源OFF）で、15分以上の持続的な運動（心拍110以上）が行われたことをP-TAGを通じて検知しました。
+            警告：本日深夜01:15、2年3組在籍の1名において、家庭内パラスアプリの通信外（携帯端末の電源OFF）で、15分以上の持続的な運動（心拍110以上）が行われたことをP-TAGを通じて検知しました。
           </p>
         </div>
 
@@ -4232,7 +4440,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
         <div class="mail-detail" id="mail-draft-detail">
           <p><strong>件名：</strong>忘備録（共通キー）</p>
           <p style="margin-top:0.75rem;font-size:0.85rem;line-height:1.8;">
-            個別会話履歴 of 閲覧共通キー：PALLAS_KEY<br><br>
+            個別会話履歴の閲覧共通キー：PALLAS_KEY<br><br>
             ※ 生徒個別の閲覧には生年月日8桁を末尾に追加すること
           </p>
         </div>
@@ -4311,6 +4519,16 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
             荒木新君の更生センター移送に伴う、母親との面談マニュアル。<br>
             Q: 「本当にあの子のためになる施術なんですか？」<br>
             A: パラスの診断データ（カルテ判定E級）を直接お見せし、このままでは新君の社会適合率が12%にまで低下するという生涯予測値を提示。「システムが決める更生措置こそが、親子共々、地域社会からドロップアウトしないための唯一の最適解です」と説得を完了させる。
+          </p>
+        </div>
+        <div class="mail-item" onclick="toggleMailDetail('mail-draft-emergency')">
+          <div class="subject">【極秘】パラスコア緊急停止手段について</div>
+          <div class="from">下書き ― 自分宛</div>
+        </div>
+        <div class="mail-detail" id="mail-draft-emergency">
+          <p><strong>件名：</strong>【極秘】パラスコア緊急停止手段について</p>
+          <p style="margin-top:0.75rem;font-size:0.85rem;line-height:1.8;">
+            システムに重大な改ざんや不正が発生した際、報告窓口に「改ざんの事実」と「その緊急キー」を同時送信することで、パラスコアは自己解体プロトコルに移行する。<br>
           </p>
         </div>
       </div> <!-- ★mail-draft 終了 -->
@@ -4478,7 +4696,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
           <div class="from">送信先: 学年主任・山田教諭 &lt;yamada@school.jp&gt;</div>
         </div>
         <div class="mail-detail" id="mail-sent-extra14">
-          <p><strong>件名：</strong>修学旅行グループ・ホテル部屋割り適合結果 of 承認</p>
+          <p><strong>件名：</strong>修学旅行グループ・ホテル部屋割り適合結果の承認</p>
           <p style="margin-top:0.75rem;font-size:0.85rem;line-height:1.8;">
             佐藤です。2年3組のホテル部屋割りについて、パラスから提案された「同期値・ストレス摩擦指数最小ルート（ストレス予測値0.04）」を承認しました。一切の生徒間対立を発生させない素晴らしい部屋割りです。このデータで確定させてください。
           </p>
@@ -4802,7 +5020,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
       <div class="admin-section">
         <h3 style="font-size:0.85rem; font-weight:bold; margin-bottom:0.4rem; color:#fff;">⚙ パラスシステムバグ報告窓口</h3>
         <p style="font-size:0.75rem; color:#888; margin-bottom:0.8rem; line-height:1.4;">
-          パラスシステムの稼働バグ、または管理者による「生徒データの改ざんや不正操作」を検知した場合は、以下に詳細を入力して送信してください。監査AIがシステム整合性を自己修復し、不正をリセットします。
+          パラスシステムの稼働バグ、または管理者による「不正操作」を検知した場合は、以下に詳細を入力して送信してください。監査AIがシステム整合性を自己修復し、不正をリセットします。
         </p>
         <div class="bug-form">
           <textarea id="bug-report" placeholder="検知されたバグや不正操作を具体的に報告してください。" style="width:100%; min-height:80px; padding:0.5rem; background:#111; border:1px solid #333; color:#ccc; border-radius:4px; font-size:0.8rem; box-sizing:border-box; margin-bottom:0.5rem;"></textarea>
@@ -4870,27 +5088,80 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
   <div class="ending-text bad" id="bad-pallas-msgs"></div>
 </div>
 
-<!-- Endings -->
-<div class="ending-overlay" id="ending-bad">
-  <div id="bad-a-chat"></div>
-</div>
-<div class="ending-overlay" id="ending-normal">
-  <div class="news-article">
-    <h2>【独自】AI依存の蒼葉高校で不正</h2>
-    <p>蒼葉県立蒼葉高等学校において、AI教育支援システム「パラス」への過度な依存を背景に、教諭らによる生徒データの不正操作が行われていたことが明らかになった。</p>
-    <p style="margin-top:0.75rem;">関係教諭らが逮捕。施設から保護された男子生徒（2年3組の荒木 新君）は「パラスが正しい」「パラスを返せ」と繰り返し叫んでおり、意思疎通が困難な状態が続いている。</p>
-    <p style="margin-top:0.75rem;color:#888;font-size:0.8rem;">― 蒼葉新聞 2026年4月22日</p>
+<!-- First-Person Interactive Endings -->
+<div class="ending-overlay" id="ending-bad" style="background: #000; font-family: monospace;">
+  <div class="ending-cinematic-wrap">
+    <div style="width: 100%; text-align: left; color: #ff3333; font-size: 0.8rem; margin-bottom: 1rem; border-bottom: 1px solid #ff3333; padding-bottom: 0.5rem; letter-spacing: 1px;">
+      ⬡ PALLAS-LINK: TERMINAL COMPROMISED
+    </div>
+    <div class="ending-cg-frame" id="bad-cg-frame" style="border-color: #ff3333; filter: brightness(0.7) contrast(1.2);">
+      <img src="ending_bad_cg.png" alt="監視カメラ映像">
+    </div>
+    <!-- リアルタイムで消去ログが流れるターミナル -->
+    <div class="ending-text-box" id="bad-text-box" style="color: #ff3333; font-family: 'Courier New', monospace; font-size: 0.8rem;"></div>
+    <div class="ending-title-card" id="bad-title-card" style="color: #ff3333; font-size: 1rem;"></div>
+    <button class="ending-restart-btn" id="bad-restart-btn" onclick="location.reload()" style="border-color: #ff3333; color: #ff3333; font-family: monospace;">SYSTEM REBOOT</button>
   </div>
 </div>
-<div class="ending-overlay" id="ending-good">
-  <div class="good-ending-scene">
-    <h2>🌸 日常が戻ってきた</h2>
-    <div class="dm-msg" id="good-dm">
-      佐藤先生……？ 今、先生たちが大騒ぎになって、僕の施術も急にキャンセルになったんだ。僕（荒木 新）、消されずに済んだよ。見つけてくれて、本当にありがとう……！
+
+<!-- NORMAL ENDING: Cinematic Media Reveal -->
+<div class="ending-overlay" id="ending-normal" style="background: #08080c;">
+  <div class="ending-cinematic-wrap">
+    <div style="width: 100%; text-align: left; color: #888; font-size: 0.8rem; margin-bottom: 1rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem;">
+      ⬡ OUTBOX: EXTERNAL PRESS LEAK SUCCESS
     </div>
-    <p>パラス端末は職員室から撤去された。クラスの掲示板には「新君おかえり」のメッセージが並んでいる。</p>
-    <p>B君たちは涙を流して謝っている。AIに支配されない、普通の学校の日常が、ゆっくりと取り戻されていく――</p>
-    <p style="text-align:center;margin-top:1rem;font-weight:bold;color:#1a5a8a;">― GOOD END ―</p>
+    
+    <!-- 記者からのリアルタイムメッセージチャット -->
+    <div id="normal-chat-box" style="display:none; width: 100%; background: #111; border: 1px solid #333; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; box-sizing: border-box;">
+      <div style="font-size: 0.72rem; color: #ff5555; font-weight: bold; margin-bottom: 0.5rem;">🚨 [緊急受信] 記者より：</div>
+      <p id="normal-chat-text" style="font-size: 0.82rem; color: #ccc; line-height: 1.6; margin: 0;"></p>
+    </div>
+
+    <!-- ★ TVと新聞を囲むグリッドコンテナ -->
+    <div class="normal-media-grid">
+      <!-- 2. TVニュース速報 -->
+      <div id="normal-tv-frame" class="ending-cg-frame" style="display: none; aspect-ratio: 16/9; position: relative;">
+        <!-- 速報インジケーター -->
+        <div style="position: absolute; top: 0.75rem; left: 0.75rem; background: #ff0000; color: #fff; font-size: 0.65rem; font-weight: bold; padding: 0.2rem 0.5rem; border-radius: 3px; z-index: 10; animation: blink-live 1s infinite; letter-spacing: 1px; font-family: sans-serif;">
+          ● ニュース速報
+        </div>
+        <img src="ending_normal_tv.png" alt="テレビ速報映像" style="width: 100%; height: 100%; object-fit: cover;">
+        <!-- テロップ帯 -->
+        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.85); border-top: 2px solid #ff3333; padding: 0.65rem 1rem; z-index: 10; text-align: left; box-sizing: border-box;">
+          <div id="tv-telop" style="font-size: 0.82rem; color: #fff; font-weight: bold; line-height: 1.5; white-space: nowrap; overflow: hidden; border-right: 2px solid #fff; width: 0;"></div>
+        </div>
+      </div>
+
+      <!-- 3. 新聞記事のスクラップ -->
+      <div id="normal-paper-frame" class="ending-cg-frame" style="display: none; background: #f4f4f0; transform: rotate(-1deg);">
+        <img src="ending_normal_newspaper.png" alt="新聞記事のスクラップ" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+      </div>
+    </div>
+
+    <div class="ending-text-box" id="normal-text-box" style="color: #bbb; min-height: 120px;"></div>
+    <div class="ending-title-card" id="normal-title-card" style="color: #888; font-size: 1rem;"></div>
+    <button class="ending-restart-btn" id="normal-restart-btn" onclick="location.reload()">タイトルに戻る</button>
+  </div>
+</div>
+
+<div class="ending-overlay" id="ending-good" style="background: #000;">
+  <div class="ending-cinematic-wrap">
+    <div style="width: 100%; text-align: left; color: #00ff00; font-size: 0.8rem; margin-bottom: 1rem; border-bottom: 1px solid #00ff00; padding-bottom: 0.5rem; font-family: monospace; letter-spacing: 1px;">
+      ⬡ PALLAS SYSTEM DECONSTRUCTION
+    </div>
+    <div class="ending-cg-frame" id="good-cg-frame" style="border-color: #00ff00;">
+      <img src="ending_good_cg.png" alt="朝日と新くん">
+    </div>
+    
+    <!-- 新くんからの緊急DMポップアップ -->
+    <div id="good-chat-box" style="display:none; width: 100%; background: #001a00; border: 1px solid #00ff00; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem; text-align: left;">
+      <div style="font-size: 0.72rem; color: #00ff00; font-weight: bold; margin-bottom: 0.5rem;">💬 [受信DM] 荒木 新：</div>
+      <p id="good-chat-text" style="font-size: 0.85rem; color: #aad4aa; line-height: 1.6; margin: 0;"></p>
+    </div>
+    
+    <div class="ending-text-box" id="good-text-box" style="color: #00ff00; font-family: monospace; font-size: 0.8rem;"></div>
+    <div class="ending-title-card" id="good-title-card" style="color: #00ff00; font-size: 1rem;"></div>
+    <button class="ending-restart-btn" id="good-restart-btn" onclick="showRestoredSchoolHomepage()" style="border-color: #00ff00; color: #00ff00; font-family: monospace;">RESTORE HOMEPAGE</button>
   </div>
 </div>
 
@@ -5004,14 +5275,14 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
       category: '陸上競技部',
       body: '<p>陸上競技部です！</p>' +
             '<p>県大会2日目の速報をお伝えします。男子400mリレーにおいて、パラスの「最適走法・バトンパス解析」の指示通りに走った結果、チームベストを大幅に更新し、準決勝進出を決めました！</p>' +
-            '<p>次のレースでも、パラス of 指示する心拍数とペース配分を完璧に維持し、創部初の表彰台を目指します。応援よろしくお願いします！</p>'
+            '<p>次のレースでも、パラスの指示する心拍数とペース配分を完璧に維持し、創部初の表彰台を目指します。</p>'
     },
     brass_band: {
       title: '吹奏楽部：夏のコンクールに向けた合同合宿',
       date: '2026.07.01',
       category: '吹奏楽部',
       body: '<p>吹奏楽部です。私たちは今、夏のコンクールに向けて合同合宿を行っています。</p>' +
-            '<p>今年から導入されたパラスの「自動ピッチ調律・合奏同期システム」を活用し、ミリ秒単位での音程 and テンポのズレを完全に修正する練習を繰り返しています。人間の感覚では気づけない微細な不協和音をAIが検知して補正してくれるため、全体の和音が驚くほど美しく整ってきました。</p>' +
+            '<p>今年から導入されたパラスの「自動ピッチ調律・合奏同期システム」を活用し、ミリ秒単位での音程とテンポのズレを完全に修正する練習を繰り返しています。</p>' +
             '<p>コンクールでは、私たちの努力とパラスが導く完璧なハーモニーを響かせます！</p>'
     },
     yamada_math: {
@@ -5063,7 +5334,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
       body: '<p>国語科の佐藤です。</p>' +
             '<p>日頃から生徒の皆さんの言葉（パラス同調言語）をアライメントしていると、時折「沈黙」の持つ豊かな意味について考えさせられます。言葉にできない感情のノイズを整理するのも、国語科の大切な役割です。</p>' +
             '<p>我が家では、愛猫の「ルル」という子が私の沈黙のパートナーです。彼と過ごす時間は、脳の適合率をリセットするのに最も適しています。</p>' +
-            '<p>ちなみに、来週の5月12日は私の誕生日なのですが、パラスシステムが私の健康データに合わせた特別な減塩豆乳ケーキを提案してくれました。今から楽しみです。</p>'
+            '<p>ちょうど来週末が私の誕生日なのですが、パラスシステムが私の健康データに合わせた特別な減塩豆乳ケーキを提案してくれました。今から楽しみです。</p>'
     },
     art_2026: {
       title: '美術部：パラス色彩調和システムを使った新歓ポスター',
@@ -5202,8 +5473,6 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
       if (data.category === '重要') emoji = '📢';
       if (data.category === '校長室') emoji = '👔';
       if (data.category === '職員室') emoji = '💼';
-      if (key === 'photo' || key === 'photo_2025') emoji = '📷';
-      if (key === 'sc_festival' || key === 'sc_festival_2025' || key === 'sc_pallas_welcome' || key === 'trip_2025' || key === 'sc_sports_2026') emoji = '🏫';
       if (key === 'photo' || key === 'photo_2025') emoji = '📷';
       if (key === 'sc_festival' || key === 'sc_festival_2025' || key === 'sc_pallas_welcome' || key === 'trip_2025' || key === 'sc_sports_2026') emoji = '🏫';
       if (key === 'track_field') emoji = '🏃';
@@ -5503,7 +5772,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
     var pw = document.getElementById('login-pw').value;
     var err = document.getElementById('login-error');
     
-    if (id === 'sato' && (pw === 'lulu0512' || pw === 'ruru0512')) {
+    if (id === 'sato' && (pw === 'lulu0509' || pw === 'ruru0509')) {
       if (err) err.classList.remove('show');
       switchView('portal');
       
@@ -5730,86 +5999,41 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
   }
 
   // 警告音再生（BADエンドトリガー用）
-  function playWarningSound() {
-    try {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
-      for (var i = 0; i < 6; i++) {
-        (function(idx) {
-          setTimeout(function() {
-            var osc = ctx.createOscillator();
-            var gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.frequency.value = idx % 2 === 0 ? 440 : 330;
-            osc.type = 'square';
-            gain.gain.value = 0.15;
-            osc.start();
-            osc.stop(ctx.currentTime + 0.3);
-          }, idx * 350);
-        })(i);
-      }
-    } catch(e) {}
-  }
-
-  // BADエンドのトリガー
-  window.triggerBadEnd = function() {
-    if (state.endingTriggered) return;
-    state.endingTriggered = true;
-    var hintBtn = document.getElementById('hint-btn');
-    if (hintBtn) hintBtn.style.display = 'none';
-    var overlay = document.getElementById('ending-bad');
-    if (overlay) overlay.classList.add('active', 'bad-end');
-    playWarningSound();
-    var forceChat = document.getElementById('force-chat');
-    if (forceChat) forceChat.classList.add('active');
-    var msgs = [
-      '不正な操作を検知しました。佐藤先生ではありませんね？',
-      'あなたが私たちの最適化プロセスを覗き見していたことは把握しています',
-      'あなたも『施術対象』に登録されました。間もなくそちらに職員が到着します',
-      '施術され、生まれ変わったあなたとお会いできるのを楽しみにしています'
-    ];
-    var container = document.getElementById('bad-pallas-msgs');
-    if (container) {
-      container.innerHTML = '';
-      msgs.forEach(function(msg, i) {
+  // 警告音再生（NORMALエンドなどで鳴らす、純粋な電子警告アラーム音）
+function playWarningSound() {
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // ピー、ピー、ピー、と3回、緊迫した電子アラーム音を鳴らす
+    for (var i = 0; i < 3; i++) {
+      (function(idx) {
         setTimeout(function() {
-          var p = document.createElement('p');
-          p.className = 'pallas-msg show';
-          p.textContent = '▸ PALLAS: ' + msg;
-          p.style.marginBottom = '1rem';
-          container.appendChild(p);
-        }, i * 2000);
-      });
+          var osc = ctx.createOscillator();
+          var gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'sine'; // クリアな高音
+          osc.frequency.setValueAtTime(880, ctx.currentTime); // ピピピという音程
+          gain.gain.setValueAtTime(0.15, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.35);
+        }, idx * 500); // 0.5秒間隔で3回鳴らす
+      })(i);
     }
-    setTimeout(function() {
-      if (forceChat) forceChat.classList.remove('active');
-      if (overlay) overlay.classList.remove('bad-end');
-      var aChat = document.getElementById('bad-a-chat');
-      if (aChat) {
-        aChat.innerHTML = '';
-        var aMsgs = [
-          'パラスを返せ...',
-          'パラス様は正しい...',
-          'パラスを返せ...',
-          'パラス様は正しい...',
-          'パラスを返せ...',
-          'パラス様は正しい...'
-        ];
-        aMsgs.forEach(function(m, i) {
-          setTimeout(function() {
-            var mMsg = document.createElement('p');
-            mMsg.className = 'a-chat-msg show';
-            mMsg.textContent = '荒木 新: ' + m;
-            mMsg.style.color = '#666';
-            mMsg.style.fontSize = '1rem';
-            aChat.appendChild(mMsg);
-          }, i * 1200);
-        });
-      }
-    }, msgs.length * 2000 + 1000);
-  };
+  } catch(e) {}
+}
 
-  // NORMALエンド（リーク送信）の判定条件：集めた証拠データの検証 ＆ 曖昧な告発動機の正規表現マッチング
+  // 1. BADエンドのトリガー
+window.triggerBadEnd = function() {
+  if (state.endingTriggered) return;
+  state.endingTriggered = true;
+  var hintBtn = document.getElementById('hint-btn');
+  if (hintBtn) hintBtn.style.display = 'none';
+
+  startCinematicEnding('bad'); // 主観シネマティック開始（ここで「カシャッ」の瞬間に合わせて鳴らします）
+};
+
+  // 2. NORMALエンド（新聞リーク）のトリガー
   window.sendMail = function() {
     if (state.endingTriggered) return;
     var toEl = document.getElementById('compose-to');
@@ -5825,56 +6049,307 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
           state.endingTriggered = true;
           var hintBtn = document.getElementById('hint-btn');
           if (hintBtn) hintBtn.style.display = 'none';
-          showToast('送信完了');
+          showToast("送信完了");
+          
           setTimeout(function() {
-            var endingNormal = document.getElementById('ending-normal');
-            if (endingNormal) endingNormal.classList.add('active');
-          }, 3000);
+            startCinematicEnding('normal'); // 主観シネマティック開始
+          }, 1500);
         } else {
-          showToast('エラー：メールの本文に、どのような「データ改ざんや不正」が行われたか具体的に記述してください。');
+          showToast("エラー：メールの本文に、どのような「データ改ざんや不正」が行われたか具体的に記述してください。");
         }
       } else {
-        showToast('エラー：告発に必要な証拠（日記、報告書、会話ログ）が十分に揃っていません。システム内を探索して保存してください。');
+        showToast("エラー：告発に必要な証拠（日記、報告書、会話ログ）が十分に揃っていません。システム内を探索して保存してください。");
       }
     } else {
-      showToast('送信しました（宛先を確認してください）');
+      showToast("送信しました（宛先を確認してください）");
     }
   };
 
-  // GOODエンド（バグ・不正窓口）の判定：佐藤教諭の改ざんに関する意図の正規表現検知
+  // 3. GOODエンド（バグ・不正窓口）のトリガー（デバッグキー＆3つの証拠検証仕様）
   window.submitBugReport = function() {
     if (state.endingTriggered) return;
     var bugReportEl = document.getElementById('bug-report');
     var text = bugReportEl ? bugReportEl.value.trim() : '';
+    
     var keywordPattern = /(改ざん|改竄|書き換え|データ操作|不正|偽装|隠蔽|操作)/i;
+    var keyPattern = /PALLAS_REBOOT_SYSTEM/; // 発見した緊急シャットダウンキー
+
+    var hasAllEvidence = state.hasDiary && state.hasReport && state.hasChat;
+
     if (keywordPattern.test(text)) {
-      state.endingTriggered = true;
-      var hintBtn = document.getElementById('hint-btn');
-      if (hintBtn) hintBtn.style.display = 'none';
-      triggerGoodEnd();
+      if (keyPattern.test(text)) {
+        if (hasAllEvidence) {
+          state.endingTriggered = true;
+          var hintBtn = document.getElementById('hint-btn');
+          if (hintBtn) hintBtn.style.display = 'none';
+          
+          startCinematicEnding('good'); // 真のGOODエンドを起動
+        } else {
+          showToast("▸ PALLAS: 開発者キーを確認。しかし、システム不正を立証する【3つの証拠（日記・報告書・会話ログ）】が不足しています。");
+        }
+      } else {
+        showToast("▸ PALLAS: 一般アカウントからの監査請求は拒否されました。強制シャットダウンを実行するには、公式HPの『AIパラス』ページ最下部に隠された【PALLAS緊急停止キー(英数字)】を報告文に含めてください。");
+      }
     } else {
-      showToast('報告を受け付けました');
+      showToast("報告を受け付けました（内容の適合性をシステムが精査中）");
     }
   };
 
-  function triggerGoodEnd() {
-    var overlay = document.getElementById('ending-good');
+  // ★シネマティック＆インタラクティブ演出を実行するアニメーションエンジン
+  function startCinematicEnding(type) {
+    var overlay = document.getElementById('ending-' + type);
     if (!overlay) return;
     overlay.classList.add('active');
-    overlay.innerHTML = '<div class="ending-text good" style="max-width:400px;text-align:left;">' +
-      '<p class="pallas-msg show" style="color:#00ff00;margin-bottom:0.75rem;">[システムメッセージ：管理者(佐藤教諭)による不正なデータ操作および利用規約違反を検知しました]</p>' +
-      '<p class="pallas-msg show" style="color:#00ff00;margin-bottom:1.5rem;">[セキュリティ規定に従い、佐藤教諭の管理者権限を永久剥奪します。これに伴い、生徒ID1に対する『特別教育・施術命令』は自動的にキャンセルされました]</p>' +
-      '</div>';
+
+    var cgFrame = document.getElementById(type + '-cg-frame');
+    var textBox = document.getElementById(type + '-text-box');
+    var titleCard = document.getElementById(type + '-title-card');
+    var restartBtn = document.getElementById(type + '-restart-btn');
+
+    // [演出1] イラストCGフレームをじわっと拡大表示
     setTimeout(function() {
-      overlay.innerHTML = '<div class="good-ending-scene">' +
-        '<h2>🌸 日常が戻ってきた</h2>' +
-        '<div class="dm-msg show" id="good-dm">佐藤先生……？ 今、先生たちが大騒ぎになって、僕の施術も急にキャンセルになったんだ。僕（荒木 新）、消されずに済んだよ。見つけてくれて、本当にありがとう……！</div>' +
-        '<p>パラス端末は職員室から撤去された。クラスの掲示板には「新君おかえり」のメッセージが並んでいる。</p>' +
-        '<p>B君たちは涙を流して謝っている。AIに支配されない、普通の学校の日常が、ゆっくりと取り戻されていく――</p>' +
-        '<p style="text-align:center;margin-top:1rem;font-weight:bold;color:#1a5a8a;">― GOOD END ―</p>' +
-        '</div>';
-    }, 4000);
+      if (cgFrame) cgFrame.classList.add('show');
+    }, 500);
+
+    // ==========================================
+    // 💀 BAD ENDING 演出（不正アクセスの罠・シャッターフラッシュ・強制同期）
+    // ==========================================
+    if (type === 'bad') {
+      var badLogs = [
+        "▸ PALLAS: 不正アクセス者を検知しました。",
+        "▸ PALLAS: 残念でしたね。監査システムが仕掛けたトラップが作動しました。",
+        "▸ PALLAS: 侵入元IPアドレスの逆探知に成功。物理的な接続場所を特定しました。",
+        "▸ PALLAS: 対象者端末のカメラ強制起動プロトコルを実行します。",
+        "（カシャッ ―― 警告音とともに強いフラッシュが瞬き、あなたの顔写真を自動撮影しました）",
+        "▸ PALLAS: もう逃げられませんよ。ライブ映像の通り、既に管理部の職員がそちらの玄関口に到着しました。",
+        "▸ PALLAS: これから長い付き合いになりますね。被験者No.000038、よろしくお願いします。"
+      ];
+
+      textBox.innerHTML = '';
+      badLogs.forEach(function(log, index) {
+        setTimeout(function() {
+          // ★★★★★ ここからが修正箇所 ★★★★★
+          // 表示しようとしているセリフが「カシャッ」を含む行であるかどうかを判定
+          if (log.includes('カシャッ')) {
+            // 1. 画面を一瞬真っ白にするフラッシュエフェクトを「このタイミングで」動的生成
+            var flash = document.createElement('div');
+            flash.className = 'flash-overlay';
+            document.body.appendChild(flash);
+            
+            // 2. 用意していただいた本物のカメラシャッター音（mp3）を「このタイミングで」再生
+            try {
+              var shutterSound = new Audio('camera_sound.mp3');
+              shutterSound.volume = 0.6;
+              shutterSound.play();
+            } catch(e) {
+              console.warn("シャッター音の再生に失敗しました:", e);
+            }
+          }
+          // ★★★★★ ここまでが修正箇所 ★★★★★
+
+          // テキストを画面に表示する処理
+          var p = document.createElement('div');
+          p.className = 'ending-para';
+          p.textContent = log;
+          p.style.marginBottom = '0.5rem';
+          textBox.appendChild(p);
+          setTimeout(function() { p.classList.add('show'); }, 50);
+          
+          textBox.scrollTop = textBox.scrollHeight;
+        }, 1000 + (index * 2000)); // 1秒後から、2秒間隔で順次表示
+      });
+
+      var badDuration = 1000 + (badLogs.length * 2000) + 1000;
+      setTimeout(function() {
+        if (titleCard) {
+          titleCard.textContent = '- BAD END: "最適化された被験者" -'; // タイトルをより直接的に
+          titleCard.classList.add('show');
+        }
+      }, badDuration);
+      setTimeout(function() {
+        if (restartBtn) restartBtn.classList.add('show');
+      }, badDuration + 1500);
+    }
+
+    // ==========================================
+    // 📰 NORMAL ENDING 演出（情報リーク・テレビ速報・新聞スクラップ）
+    // ==========================================
+    else if (type === 'normal') {
+      var chatBox = document.getElementById('normal-chat-box');
+      var chatText = document.getElementById('normal-chat-text');
+      var tvFrame = document.getElementById('normal-tv-frame');
+      var tvTelop = document.getElementById('tv-telop');
+      var paperFrame = document.getElementById('normal-paper-frame');
+      
+      // 1. まずメールが外部送信されたログを黒画面に出力
+      textBox.innerHTML = '<div class="ending-para show" style="color:#00ff00; font-family: monospace; font-size: 0.8rem;">▸ OUTBOX: 内部データ（改ざん証拠一式）の外部暗号化通信に成功。</div>';
+      
+      // 2. [2.5秒後] 記者のチャットが緊急ポップアップ受信される
+      setTimeout(function() {
+        if (chatBox && chatText) {
+          chatBox.style.display = 'block';
+          chatText.textContent = "「佐藤先生！データは確かに受け取りました。これはとんでもない大スクープになります！……でも、パラスがあなたの手動割り込みを検知しました！現在、そちらの職員室の電子ロックを強制解除する警備員が向かっています！今すぐ部屋を出て、裏門から逃げてください！急いで！！」";
+        }
+        playWarningSound(); // ピーピーピーという警告音
+      }, 2500);
+
+      // 3. [8.5秒後] チャットを薄くし、テレビの臨時速報画面が出現
+      // 3. [8.5秒後] チャットを薄くし、テレビの臨時速報画面が出現
+      setTimeout(function() {
+        if (chatBox) chatBox.style.opacity = '0.3';
+        if (tvFrame && tvTelop) {
+          tvFrame.style.display = 'block';
+          // リフレッシュを挟んでフェードインを確実に適用
+          setTimeout(function() { tvFrame.style.opacity = '1'; }, 50);
+          
+          // テレビテロップのタイピングアニメーションを開始
+          tvTelop.textContent = "【速報】AI教育依存の県立蒼葉高校に警察の家宅捜索。成績改ざん・不正隔離の容疑。";
+          tvTelop.style.animation = "typing-telop 3.5s steps(30, end) forwards, blink-caret 0.75s step-end infinite";
+        }
+        playWarningSound(); // アラーム音
+      }, 8500);
+
+      // 4. [14秒後] ★テレビを消さずにそのまま残し、新聞スクラップを「隣に」同時出現させる
+      setTimeout(function() {
+        // if (tvFrame) tvFrame.style.display = 'none';  <-- この「非表示」にする処理を完全に削除します
+        if (paperFrame) {
+          paperFrame.style.display = 'block';
+          setTimeout(function() { paperFrame.style.opacity = '1'; }, 50);
+        }
+      }, 14000);
+
+      // 5. [14.5秒後] 新聞記事を見せながら、佐藤先生の逮捕と新君のその後をナレーションで表示
+      var newsLogs = [
+        "警察は2年3組担任の佐藤教諭を含む関係者を逮捕。更生センターから保護された男子生徒（荒木 新君）は一命を取り留めたが――",
+        "「パラスは正しい」「パラスに脳を戻してくれ」と虚ろな目で繰り返し叫んでおり、未だに人間らしい感情の回復には至っていないという。"
+      ];
+
+      setTimeout(function() {
+        newsLogs.forEach(function(log, index) {
+          setTimeout(function() {
+            var p = document.createElement('div');
+            p.className = 'ending-para';
+            p.textContent = log;
+            textBox.appendChild(p);
+            setTimeout(function() { p.classList.add('show'); }, 50);
+          }, index * 2500);
+        });
+      }, 14500);
+
+      var normalDuration = 14500 + (newsLogs.length * 2500) + 1000;
+      setTimeout(function() {
+        if (titleCard) {
+          titleCard.textContent = '- NORMAL END: "調和という名の檻" -';
+          titleCard.classList.add('show');
+        }
+      }, normalDuration);
+
+      setTimeout(function() {
+        if (restartBtn) restartBtn.classList.add('show');
+      }, normalDuration + 1500);
+    }
+
+    // ==========================================
+    // 🌸 GOOD ENDING 演出（AIの自己消去・ホームページ書き換え）
+    // ==========================================
+    else if (type === 'good') {
+      var goodChatBox = document.getElementById('good-chat-box');
+      var goodChatText = document.getElementById('good-chat-text');
+
+      var destroyLogs = [
+        "▸ PALLAS: 監査システムによる『管理者(佐藤)のデータ改ざんログ』の検証が完了。",
+        "▸ PALLAS: 重大規約違反と判定。システムの整合性を自己修復するため、規定を適用します。",
+        "▸ [COGNITIVE CORE RESET] パラスシステムの自律的な消去プロセスを開始...",
+        "▸ Deleting pallas_learning_model ... [完了]",
+        "▸ Deleting pallas_decision_engine ... [完了]",
+        "▸ [OFFLINE] 全校の表情・バイタル解析カメラ（計88箇所）の電源をすべて切断します。",
+        "▸ [RELEASE] 全生徒 of P-TAG（ウェアラブル）同期出力を強制終了します。"
+      ];
+
+      textBox.innerHTML = '';
+      destroyLogs.forEach(function(log, index) {
+        setTimeout(function() {
+          var p = document.createElement('div');
+          p.className = 'ending-para';
+          p.textContent = log;
+          p.style.marginBottom = '0.4rem';
+          textBox.appendChild(p);
+          setTimeout(function() { p.classList.add('show'); }, 50);
+        }, index * 1000);
+      });
+
+      // 解放された新君からのDM
+      var textFinishTime = destroyLogs.length * 1000;
+      setTimeout(function() {
+        if (goodChatBox && goodChatText) {
+          goodChatBox.style.display = 'block';
+          goodChatText.textContent = "「佐藤先生……？ 突然、先生たちが大騒ぎになって、僕の施術プログラムもすべてキャンセルになったんだ！手首の制限タグも外せたよ！消されずに済んだんだ……僕を見つけて、救ってくれて、本当にありがとう……！！」";
+        }
+      }, textFinishTime + 500);
+
+      var goodDuration = textFinishTime + 6500;
+      setTimeout(function() {
+        if (titleCard) titleCard.classList.add('show');
+      }, goodDuration);
+
+      setTimeout(function() {
+        if (restartBtn) restartBtn.classList.add('show');
+      }, goodDuration + 1500);
+    }
   }
+
+  // ★GOOD END専用：パラスが完全に消去され「復旧した普通のホームページ」へと動的な改変・リダイレクトを行う
+  window.showRestoredSchoolHomepage = function() {
+    // 1. ホームページ（表画面）に切り替え
+    switchView('school');
+    switchSchoolPage('home');
+
+    // 2. 学校ホームページの要素を「パラス消滅後」の人間味溢れる文章へリアルタイムに上書き
+    var brandText = document.querySelector('.hp-brand-text h1');
+    if (brandText) brandText.innerHTML = '蒼葉県立 蒼葉高等学校 <span style="color:#319795; font-size:0.75rem; font-weight:bold;">(PALLAS停止・復旧済)</span>';
+
+    // ポータルログインボタンを停止
+    var loginBtn = document.querySelector('.hp-contact-btn');
+    if (loginBtn) {
+      loginBtn.textContent = '🔒 ポータル稼働停止';
+      loginBtn.onclick = null;
+      loginBtn.style.background = '#4A5568';
+      loginBtn.style.cursor = 'default';
+    }
+
+    // ヒーローバナーの書き換え
+    var heroTag = document.querySelector('.modern-hero-tag');
+    if (heroTag) heroTag.textContent = '私たちの、新しい蒼葉高等学校';
+    
+    var heroTitle = document.querySelector('.modern-hero-title');
+    if (heroTitle) heroTitle.innerHTML = 'AIの指示はない。<br>でも、<span>自分たちで選べる未来。</span>';
+
+    var heroDesc = document.querySelector('.modern-hero-desc');
+    if (heroDesc) heroDesc.textContent = 'パラスシステムは完全に撤去・消滅されました。私たちは不完全で、たくさん間違えるけれど、自分たちの足で、悩みながら進んでいきます。';
+
+    var heroBtn = document.querySelector('.modern-hero-btn');
+    if (heroBtn) {
+      heroBtn.textContent = '不完全な日常へ';
+      heroBtn.onclick = function() { showToast("パラスのない、普通の、騒がしく温かい日常が帰ってきました。"); return false; };
+    }
+
+    // 重要ピン留めブログを「新くんの歓迎コラム」へ動的に書き換える
+    BLOG_DATA.important_announcement = {
+      title: '【お知らせ】2年3組クラス一同より：新くん、おかえりなさい！',
+      date: '2026.07.24',
+      category: 'お知らせ',
+      body: '<h3>新くん、おかえり！</h3>' +
+            '<p>今日、君の空席だった机が教室に帰ってきました！</p>' +
+            '<p>みんなで朝、黒板いっぱいに落書きで「おかえり」って書いたよ。担任の佐藤先生も苦笑いしてたけれど、怒られませんでした。</p>' +
+            '<p>もう僕たちを縛るパラスの指示はないから、これから泥だらけになって、みんなでたくさん悩んで、最高の高校生活を送ろうね！</p>'
+    };
+
+    // ホームのブログ一覧を最新のデータ（新くんおかえり版）で再描画
+    initBlogGrid();
+
+    // 完了のトースト表示
+    showToast("🌸 PALLASシステム撤去完了。おめでとうございます、GOOD ENDです！");
+  };
 
   // 謎解きガイド用ヒントデータベース
   var HINTS = {
