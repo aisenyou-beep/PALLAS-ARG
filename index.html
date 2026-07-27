@@ -2878,7 +2878,7 @@
               
               <!-- 運動部（計18クラブ） -->
               <div style="background: #F7FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 1.25rem;">
-                <h3 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; border-bottom: 2px solid #2B6CB0; padding-bottom: 0.5rem; margin-bottom: 0.75rem; font-weight: bold;">🏃 運動部（全18部門）</h3>
+                <h3 style="margin-top: 0; color: var(--primary); font-size: 0.95rem; border-bottom: 2px solid #2B6CB0; padding-bottom: 0.5rem; margin-bottom: 0.75rem; font-weight: bold;">🏃 運動部（全19部門）</h3>
                 <ul style="list-style: none; padding: 0;">
                   <li style="margin-bottom: 0.5rem; font-size: 0.82rem;"><strong>陸上競技部</strong>（パラス最適走法データ分析）</li>
                   <li style="margin-bottom: 0.5rem; font-size: 0.82rem;"><strong>サッカー部</strong>（戦術AIシミュレーション連携）</li>
@@ -3565,7 +3565,7 @@
         <div style="background: #2a0505; border: 1px dashed #ff3333; padding: 0.85rem; margin-bottom: 1.25rem; font-size: 0.72rem; color: #ffcccc; line-height: 1.6; font-family: monospace;">
           <strong>[ 暗号解除プロトコル・ガイド ]</strong><br>
           • <strong>Key Alpha (構造・設備):</strong><br>
-          　【現校舎（鉄筋コンクリート）竣工年】- 【創立年】×【監視カメラ合計台数】。<br>
+          　（【現校舎（鉄筋コンクリート）竣工年】- 【創立年】）×【監視カメラ合計台数】。<br>
           • <strong>Key Beta (時間調整):</strong><br>
           　【単位数】<br>
           • <strong>Key Gamma (生体・ログ):</strong><br>
@@ -5071,7 +5071,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
 </div>
 
 <!-- Hint -->
-<button class="hint-btn" id="hint-btn" onclick="openHint()">ヒント</button>
+<!-- <button class="hint-btn" id="hint-btn" onclick="openHint()">ヒント</button> -->
 <div class="hint-dialog" id="hint-dialog" onclick="if(event.target===this)closeHint()">
   <div class="hint-box">
     <h3 id="hint-title">ヒント</h3>
@@ -5177,7 +5177,16 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
     currentSchoolPage: 'home',
     chatUnlocked: false,
     endingTriggered: false,
-    hintLevel: {},
+    hintLevel: {
+      school: 0,
+      status: 0,
+      roster: 0,
+      bbs: 0,
+      mail: 0,
+      reports: 0,
+      chat: 0,
+      admin: 0
+    },
     activeCourse: null,
     // 自動添付検知用の収集フラグ
     hasDiary: false,
@@ -5502,6 +5511,14 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
   window.openBlog = function(blogId) {
     var data = BLOG_DATA[blogId];
     if (!data) return;
+
+    if (blogId === 'photo' && state.hintLevel['school'] === 0) {
+      state.hintLevel['school'] = 1; // 写真部ブログを開いたら、他ブログを探すヒントへ
+    }
+    if (blogId === 'sato_cat' && state.hintLevel['school'] === 1) {
+      state.hintLevel['school'] = 2; // 佐藤先生のブログを開いたら、誕生日特定ヒントへ
+    }
+
     document.getElementById('blog-modal-title').textContent = data.title;
     document.getElementById('blog-modal-meta').textContent = data.date + ' | ' + data.category;
     document.getElementById('blog-modal-body').innerHTML = data.body;
@@ -5893,6 +5910,9 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
   window.toggleCache = function() {
     var cacheBox = document.getElementById('cache-box');
     if (cacheBox) cacheBox.classList.toggle('show');
+    if (state.hintLevel['roster'] === 0) {
+        state.hintLevel['roster'] = 1;
+    }
   };
 
   // メッセージ画面のフォルダ・作成切替
@@ -5912,6 +5932,9 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
   window.toggleMailDetail = function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.toggle('show');
+    if (id === 'mail-draft-detail' && state.hintLevel['mail'] === 1) {
+        state.hintLevel['mail'] = 2;
+      }
   };
 
   // 新の日記（証拠データ1）
@@ -5924,6 +5947,9 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
         state.hasDiary = true;
         // トースト通知（showToast）の呼び出しを削除しました
         updateAttachedEvidenceUI();
+        if (state.hintLevel['mail'] === 0) {
+          state.hintLevel['mail'] = 1;
+        }
       }
     }
   };
@@ -6088,7 +6114,7 @@ window.triggerBadEnd = function() {
           showToast("▸ PALLAS: 開発者キーを確認。しかし、システム不正を立証する【3つの証拠（日記・報告書・会話ログ）】が不足しています。");
         }
       } else {
-        showToast("▸ PALLAS: 一般アカウントからの監査請求は拒否されました。強制シャットダウンを実行するには、公式HPの『AIパラス』ページ最下部に隠された【PALLAS緊急停止キー(英数字)】を報告文に含めてください。");
+        showToast("▸ PALLAS: 一般アカウントからの監査請求は拒否されました。強制シャットダウンは実行できません。");
       }
     } else {
       showToast("報告を受け付けました（内容の適合性をシステムが精査中）");
@@ -6300,6 +6326,12 @@ window.triggerBadEnd = function() {
 
   // ★GOOD END専用：パラスが完全に消去され「復旧した普通のホームページ」へと動的な改変・リダイレクトを行う
   window.showRestoredSchoolHomepage = function() {
+    // ★新規追加：エンディング画面の黒い壁（オーバーレイ）を非表示にして画面をクリアします
+    var goodOverlay = document.getElementById('ending-good');
+    if (goodOverlay) {
+      goodOverlay.classList.remove('active');
+    }
+
     // 1. ホームページ（表画面）に切り替え
     switchView('school');
     switchSchoolPage('home');
@@ -6308,7 +6340,7 @@ window.triggerBadEnd = function() {
     var brandText = document.querySelector('.hp-brand-text h1');
     if (brandText) brandText.innerHTML = '蒼葉県立 蒼葉高等学校 <span style="color:#319795; font-size:0.75rem; font-weight:bold;">(PALLAS停止・復旧済)</span>';
 
-    // ポータルログインボタンを停止
+    // 職員ポータルログインボタンを停止
     var loginBtn = document.querySelector('.hp-contact-btn');
     if (loginBtn) {
       loginBtn.textContent = '🔒 ポータル稼働停止';
@@ -6333,7 +6365,6 @@ window.triggerBadEnd = function() {
       heroBtn.onclick = function() { showToast("パラスのない、普通の、騒がしく温かい日常が帰ってきました。"); return false; };
     }
 
-    // 重要ピン留めブログを「新くんの歓迎コラム」へ動的に書き換える
     BLOG_DATA.important_announcement = {
       title: '【お知らせ】2年3組クラス一同より：新くん、おかえりなさい！',
       date: '2026.07.24',
@@ -6352,54 +6383,89 @@ window.triggerBadEnd = function() {
   };
 
   // 謎解きガイド用ヒントデータベース
+  // 謎解きガイド用ヒントデータベース（最新ファイヤーウォール＆暗号連動仕様）
+  // 謎解きガイド用ヒントデータベース（非ネタバレ・手がかり誘導仕様）
   var HINTS = {
     school: [
-      '新着情報の「写真部ブログ」を読んでみましょう。職員室の写真があるはずです。',
-      '写真を拡大すると、付箋にログイン情報が書かれています。IDとPWをメモしましょう。',
-      '「在校生・保護者の方へ」またはパラス・リンクのバナーからログイン。ID: sato / PW: nyan0512'
+      '「学校生活」ページの下部にあるブログ一覧から、写真部ブログ「職員室の日常」を開き、画像をタップして拡大してみましょう。そこにログインの手がかりがあります。',
+      '付箋に書かれた「愛猫の名前＋私の誕生日」の2つの情報を、同じブログ一覧にある他の「教員が投稿したコラム」から探しましょう。',
+      '国語科（佐藤先生）のコラムを探してください。愛猫の名前（ローマ字）が書かれており、誕生日については「投稿日の曜日」を基準にした記述があります。2026年5月2日の曜日から、来週末が何月何日になるか、カレンダーをめくって確認してみましょう。'
+    ],
+    status: [
+      'PALLASファイヤーウォールを突破するため、画面内の「暗号解除プロトコル・ガイド」をよく読んで、3つの鍵（Alpha, Beta, Gamma）を特定しましょう。',
+      '【Alpha】：公式HPの「沿革」に記載された2つの西暦（建物竣工年、学校創立年）の差を求め、そこに「施設・設備」ページに隠されたカメラ台数を掛け算します。\n【Beta】：警告ログ（CRIT）に示された科目の順番通りに、公式HPの「カリキュラム」表から各学年の授業時間（単位数）を抜き出します。',
+      '【Gamma】：「システム自動介入ログ」を過去にスクロールして、3つの情報「加藤の生徒ID」「佐々木の寄り道距離」「体育祭の制限値」を探し、すべて合計してください。\n（※特定した3つの数字が揃ったら、それぞれの入力欄に打ち込んでオーバーライドを実行します）'
     ],
     roster: [
-      '名簿の中で、不自然に空白になっている番号はありませんか？',
-      '一番下の「生徒個人カルテ（未整理）」をタップしてみましょう。',
-      '削除された1番の生徒「荒木 新」の生年月日をメモしてください。'
+      '1番の荒木新君のデータは消されていますが、クラス名簿の最下部にある「生徒個人カルテ（未整理）」から、彼のキャッシュデータを閲覧することができます。',
+      'カルテには荒木君の生まれた「年（西暦）」のみが記録されています。生まれた日付（月日）はセキュリティ保護で伏せられているため、別の日記データなどから探す必要があります。'
     ],
     bbs: [
-      '掲示板を読んで、何が起きたのか把握しましょう。',
-      '荒木 新について書かれた投稿に注目してください。',
-      '他のタブにも重要な情報があるはずです。'
+      '掲示板（L-TALK）を遡って読み、新君の適合率が低下していった理由や、それを取り囲むクラスメイトたちの反応の変化、システムによる「調整」の形跡を読み解きましょう。'
     ],
     mail: [
-      '受信ボックスのメールを読み、添付の日記を確認しましょう。',
-      '下書きフォルダに共通キー「PALLAS_KEY」が書かれています。',
-      '報告書タブも確認してみましょう。'
+      '受信箱にある新君の母親からのメールを開き、添付されている日記ファイルを展開して、新君が移送された日（日記の最後の日）の記述をよく読んでみましょう。',
+      '新君の生まれた「日付」は、その日記の記述の中に直接隠されています。カルテの「生まれた年」と組み合わせることで、彼の生年月日（8桁の数字）が完成します。',
+      '下書きフォルダの「忘備録」には、個別会話の暗号を解読するための共通キーのルールがメモされています。これと、特定した彼の生年月日を組み合わせましょう。'
     ],
     reports: [
-      '佐藤教諭の報告書を開いてみましょう。',
-      '「改ざん完了」という決定的な証拠文を見つけてください。',
-      '会話履歴のパスワードのヒントが書かれています。'
+      '2番の佐藤教諭の極秘報告書を開いてみましょう。クラス平均スコアを維持するために、彼が荒木君に対して行った「手動による不正なデータ書き換え」の事実が記録されています。'
     ],
     chat: [
-      '下書きメールの共通キーと、名簿キャッシュの生年月日を組み合わせます。',
-      'パスワードは PALLAS_KEY と生年月日 20100415 を連結したものです。',
-      '入力形式：PALLAS_KEY20100415'
+      '下書きフォルダにあった共通キー（英字）と、日記＆カルテから特定した新君の8桁の生年月日を連結させたパスワードを入力します。',
+      '解読に成功すると、新君がパラスシステムからどのような言葉を投げかけられ、抵抗していたのか、その対話ログを解読（デクリプト）することができます。これで3つのすべての証拠が揃います。'
     ],
     admin: [
-      '赤いボタンは押さない方がいいかもしれません...',
-      'バグ報告窓口に「改ざん」や「不正操作」を報告すると...？',
-      'メールで reporter@shimbun.jp に証拠を添付して送る方法もあります。'
+      '赤いボタンはシステム監査に検知される罠（BAD END）です。絶対に触れてはいけません。',
+      '【NORMAL END】：メッセージ新規作成で記者宛てにメールを送ります（3つの証拠が必要）。本文に告発内容（改ざんや不正のキーワード）を記述し、宛先のメールアドレスは受信箱の「密着取材」に関するメールから探し出しましょう。',
+      '【GOOD END（真のエンド）】：バグ報告窓口に報告文を送信します。監査AIのガードを突破してパラスを強制停止させるには、下書きの「緊急停止手段」に書かれている通り、公式HPの「AIパラス」ページ最下部に隠された（ドラッグ選択して文字を浮き上がらせる）エマージェンシーキーを報告文に含める必要があります。'
     ]
   };
 
+  // ヒント表示関数（進行状況検知版）
   window.openHint = function() {
     var key = state.currentView === 'school' ? 'school' : state.currentTab;
-    if (!state.hintLevel[key]) state.hintLevel[key] = 0;
     var hints = HINTS[key] || HINTS.school;
-    var level = Math.min(state.hintLevel[key], hints.length - 1);
+
+    // ★1. ファイヤーウォール入力欄の進捗をリアルタイム判定
+    if (key === 'status') {
+      var alphaVal = document.getElementById('override-key-alpha').value.trim();
+      var betaVal = document.getElementById('override-key-beta').value.trim();
+      
+      if (alphaVal === '1760') {
+        state.hintLevel['status'] = 1; // Alphaの入力が正しい場合、Betaのヒントへ自動進行
+        if (betaVal === '45432') {
+          state.hintLevel['status'] = 2; // Betaも正しい場合、Gammaのヒントへ自動進行
+        }
+      } else {
+        state.hintLevel['status'] = 0; // Alphaが未入力・不正なら、Alphaのヒントを表示
+      }
+    }
+
+    // ★2. チャット解読フラグの進捗判定
+    if (key === 'chat') {
+      if (state.hasDiary && state.hasReport) {
+        state.hintLevel['chat'] = 1; // 日記と報告書を両方開いている場合、合体パスコードヒントへ進む
+      } else {
+        state.hintLevel['chat'] = 0;
+      }
+    }
+
+    // ★3. 管理タブ（エンド分岐）の進捗判定
+    if (key === 'admin') {
+      if (state.hasDiary && state.hasReport && state.hasChat) {
+        state.hintLevel['admin'] = 2; // 3つの証拠が揃っている場合、エンディングの起こし方ヒントへ進む
+      } else {
+        state.hintLevel['admin'] = 1; // 揃っていない場合、警告ボタンのみの注意を促す
+      }
+    }
+
+    var level = Math.min(state.hintLevel[key] || 0, hints.length - 1);
     var hintTextEl = document.getElementById('hint-text');
     if (hintTextEl) hintTextEl.textContent = hints[level];
+    
     var hintDiagEl = document.getElementById('hint-dialog');
     if (hintDiagEl) hintDiagEl.classList.add('active');
-    if (state.hintLevel[key] < hints.length - 1) state.hintLevel[key]++;
   };
 
   window.closeHint = function() {
