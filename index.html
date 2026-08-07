@@ -6,6 +6,7 @@
   <!-- SPA GitHub Pages Redirect Script -->
   <script type="text/javascript">
     (function(l) {
+      if (l.protocol === 'file:') return;
       if (l.search[1] === 'p' ) {
         var decoded = l.search.slice(1).split('&').map(function(s) { 
           return s.replace(/~and~/g, '&')
@@ -5189,6 +5190,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
 </div>
 
 <script>
+  var isLocalFile = window.location.protocol === 'file:';
 (function() {
   'use strict';
 
@@ -5591,8 +5593,8 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
       }
     }
 
-    // ★新規追加：URL履歴の制御
-    if (pushHistory !== false) {
+    // ★修正箇所：!isLocalFile（ローカルではない場合のみ）履歴をプッシュします
+    if (pushHistory !== false && !isLocalFile) {
       var path = pageId === 'home' ? '/' : '/' + pageId;
       history.pushState({ pageId: pageId, view: 'school' }, null, path);
     }
@@ -5895,8 +5897,8 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
       hintBtn.style.display = state.endingTriggered ? 'none' : 'flex';
     }
 
-    // ★新規追加：URL履歴の制御
-    if (pushHistory !== false) {
+    // ★修正箇所：!isLocalFile（ローカルではない場合のみ）履歴をプッシュします
+    if (pushHistory !== false && !isLocalFile) {
       if (view === 'portal') {
         history.pushState({ view: 'portal' }, null, '/portal');
       } else {
