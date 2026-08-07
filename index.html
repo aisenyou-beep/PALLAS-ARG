@@ -5193,6 +5193,15 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
   var isLocalFile = window.location.protocol === 'file:';
 (function() {
   'use strict';
+  // ★新規：GitHub Pagesのリポジトリ名を自動検出し、ベースパスを決定する処理
+  var BASE_PATH = '/';
+  var pathSegments = window.location.pathname.split('/');
+  if (window.location.hostname.indexOf('github.io') !== -1 && pathSegments.length > 2) {
+    BASE_PATH = '/' + pathSegments[1] + '/'; // リポジトリ名をベースパスに設定
+  }
+  
+  // ローカル環境（ダブルクリック起動）かどうかの判定
+  var isLocalFile = window.location.protocol === 'file:';
 
   // ポータルの状態および証拠回収フラグ管理
   var state = {
@@ -5593,11 +5602,11 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
       }
     }
 
-    // ★修正箇所：!isLocalFile（ローカルではない場合のみ）履歴をプッシュします
-    if (pushHistory !== false && !isLocalFile) {
-      var path = pageId === 'home' ? '/' : '/' + pageId;
-      history.pushState({ pageId: pageId, view: 'school' }, null, path);
-    }
+    // ★修正箇所：BASE_PATH を考慮して履歴をプッシュします
+  if (pushHistory !== false && !isLocalFile) {
+    var pagePath = pageId === 'home' ? '' : pageId;
+    history.pushState({ pageId: pageId, view: 'school' }, null, BASE_PATH + pagePath);
+  }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -5897,14 +5906,14 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
       hintBtn.style.display = state.endingTriggered ? 'none' : 'flex';
     }
 
-    // ★修正箇所：!isLocalFile（ローカルではない場合のみ）履歴をプッシュします
-    if (pushHistory !== false && !isLocalFile) {
-      if (view === 'portal') {
-        history.pushState({ view: 'portal' }, null, '/portal');
-      } else {
-        var path = state.currentSchoolPage === 'home' ? '/' : '/' + state.currentSchoolPage;
-        history.pushState({ pageId: state.currentSchoolPage, view: 'school' }, null, path);
-      }
+    // ★修正箇所：BASE_PATH を考慮して履歴をプッシュします
+  if (pushHistory !== false && !isLocalFile) {
+    if (view === 'portal') {
+      history.pushState({ view: 'portal' }, null, BASE_PATH + 'portal');
+    } else {
+      var pagePath = state.currentSchoolPage === 'home' ? '' : state.currentSchoolPage;
+      history.pushState({ pageId: state.currentSchoolPage, view: 'school' }, null, BASE_PATH + pagePath);
+    }
     }
   }
 
@@ -6521,11 +6530,12 @@ window.triggerBadEnd = function() {
       if (e.key === 'Enter') doLogin();
     });
   }
+  
   // ★セキュリティ＆フォールバック付きのルーティング関数
   function router() {
     var path = window.location.pathname;
     
-    // システムが認識可能な「有効なページID一覧」を定義
+    // システムが認識可能な「有効なページID一覧」
     var VALID_ROUTES = [
       'home', 'about-principal', 'about-history', 'about-facilities', 
       'about-uniform', 'about-access', 'life-about', 'life-events', 
@@ -6534,23 +6544,24 @@ window.triggerBadEnd = function() {
       'course-tokushin', 'course-risu', 'course-sogo', 'portal'
     ];
 
-    // URLパスを分解して、末尾（最後のスラッシュ以降）の文字列を抽出
+    // 自動検出した BASE_PATH をパスから取り除く
+    if (path.indexOf(BASE_PATH) === 0) {
+      path = path.slice(BASE_PATH.length);
+    }
+
     var segments = path.split('/');
     var lastSegment = segments[segments.length - 1];
     
-    // 末尾が空、または「index.html（ローカルファイル）」の場合は初期値を 'home' に設定
     if (!lastSegment || lastSegment === 'index.html') {
       lastSegment = 'home';
     }
 
     var pageId = lastSegment;
 
-    // もし抽出したページ名が有効な一覧にない場合（ローカルパスのゴミなど）、強制的に安全な 'home' にリセット
     if (VALID_ROUTES.indexOf(pageId) === -1) {
       pageId = 'home';
     }
 
-    // 判別したページIDに基づいて画面を切替
     if (pageId === 'portal') {
       switchView('portal', false);
     } else {
