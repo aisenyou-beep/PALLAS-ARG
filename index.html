@@ -1,6 +1,29 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <!-- ファビコンの設定 -->
+  <link rel="icon" href="蒼葉.png" type="image/png">
+  <!-- SPA GitHub Pages Redirect Script -->
+  <script type="text/javascript">
+    (function(l) {
+      if (l.search[1] === 'p' ) {
+        var decoded = l.search.slice(1).split('&').map(function(s) { 
+          return s.replace(/~and~/g, '&')
+        }).reduce(function(r, s) {
+          var j = s.indexOf('=');
+          r[s.slice(0, j)] = s.slice(j+1);
+          return r;
+        }, {});
+        if (decoded.p !== undefined) {
+          window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + (decoded.p ? '/' + decoded.p : '') +
+            (decoded.q ? ('?' + decoded.q) : '') +
+            l.hash
+          );
+        }
+      }
+    }(window.location));
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>蒼葉県立 蒼葉高等学校 - 公式ホームページ</title>
@@ -5536,7 +5559,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
   };
 
   // 学校HP用ページ切り替え処理
-  window.switchSchoolPage = function(pageId, btn) {
+  window.switchSchoolPage = function(pageId, btn, pushHistory) {
     state.currentSchoolPage = pageId;
     document.querySelectorAll('.hp-page').forEach(function(p) {
       p.classList.remove('active');
@@ -5567,6 +5590,13 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
         }
       }
     }
+
+    // ★新規追加：URL履歴の制御
+    if (pushHistory !== false) {
+      var path = pageId === 'home' ? '/' : '/' + pageId;
+      history.pushState({ pageId: pageId, view: 'school' }, null, path);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -5847,7 +5877,7 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
   };
 
   // 表画面・ポータル裏画面の表示切替
-  function switchView(view) {
+  function switchView(view, pushHistory) {
     state.currentView = view;
     document.getElementById('view-school').classList.toggle('active', view === 'school');
     document.getElementById('view-portal').classList.toggle('active', view === 'portal');
@@ -5863,6 +5893,16 @@ B君たちが急に冷たくなった。話しかけても無視される。パ�
     var hintBtn = document.getElementById('hint-btn');
     if (hintBtn) {
       hintBtn.style.display = state.endingTriggered ? 'none' : 'flex';
+    }
+
+    // ★新規追加：URL履歴の制御
+    if (pushHistory !== false) {
+      if (view === 'portal') {
+        history.pushState({ view: 'portal' }, null, '/portal');
+      } else {
+        var path = state.currentSchoolPage === 'home' ? '/' : '/' + state.currentSchoolPage;
+        history.pushState({ pageId: state.currentSchoolPage, view: 'school' }, null, path);
+      }
     }
   }
 
@@ -6479,12 +6519,56 @@ window.triggerBadEnd = function() {
       if (e.key === 'Enter') doLogin();
     });
   }
+  // ★セキュリティ＆フォールバック付きのルーティング関数
+  function router() {
+    var path = window.location.pathname;
+    
+    // システムが認識可能な「有効なページID一覧」を定義
+    var VALID_ROUTES = [
+      'home', 'about-principal', 'about-history', 'about-facilities', 
+      'about-uniform', 'about-access', 'life-about', 'life-events', 
+      'life-faq', 'study-system', 'study-courses', 'study-pallas', 
+      'study-curriculum', 'career-results', 'career-voices', 'login',
+      'course-tokushin', 'course-risu', 'course-sogo', 'portal'
+    ];
+
+    // URLパスを分解して、末尾（最後のスラッシュ以降）の文字列を抽出
+    var segments = path.split('/');
+    var lastSegment = segments[segments.length - 1];
+    
+    // 末尾が空、または「index.html（ローカルファイル）」の場合は初期値を 'home' に設定
+    if (!lastSegment || lastSegment === 'index.html') {
+      lastSegment = 'home';
+    }
+
+    var pageId = lastSegment;
+
+    // もし抽出したページ名が有効な一覧にない場合（ローカルパスのゴミなど）、強制的に安全な 'home' にリセット
+    if (VALID_ROUTES.indexOf(pageId) === -1) {
+      pageId = 'home';
+    }
+
+    // 判別したページIDに基づいて画面を切替
+    if (pageId === 'portal') {
+      switchView('portal', false);
+    } else {
+      switchView('school', false);
+      switchSchoolPage(pageId, null, false);
+    }
+  }
+
+  // ★新規：ブラウザの「戻る・進む」ボタンを検知した際の処理
+  window.onpopstate = function(event) {
+    router();
+  };
 
   // 起動時の初期化実行
   initRoster();
   initBlogGrid();
   attachZoomInteractions();
-  document.body.classList.add('school-active');
+  
+  router(); // ★起動時に現在のURLパスを自動判別してロード
+
 })();
 </script>
 </body>
